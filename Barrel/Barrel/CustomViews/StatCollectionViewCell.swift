@@ -25,14 +25,16 @@ struct Statistic {
     var titleFont:UIFont?
     var bodyFont:UIFont?
     var bodyColor:UIColor?
+    var bodyBackgroundColor:UIColor?
     var customBodyView:UIView?
     
-    init(title:String, body:String, bodyFont:UIFont? = UIFont.systemFont(ofSize: 20, weight: .regular), bodyColor:UIColor? = .hetro_labelColor, titleFont:UIFont? = UIFont.systemFont(ofSize: 13, weight: .regular)) {
+    init(title:String, body:String, bodyFont:UIFont? = UIFont.systemFont(ofSize: 20, weight: .regular), bodyColor:UIColor? = .hetro_labelColor, titleFont:UIFont? = UIFont.systemFont(ofSize: 13, weight: .regular), bodyBackgroundColor:UIColor? = .hetro_white) {
         self.title = title
         self.body = body
         self.bodyFont = bodyFont
         self.bodyColor = bodyColor
         self.titleFont = titleFont
+        self.bodyBackgroundColor = bodyBackgroundColor
     
     }
     

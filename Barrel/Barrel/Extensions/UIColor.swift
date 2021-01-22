@@ -107,5 +107,16 @@ extension UIColor {
     static let oceanBlue:UIColor = UIColor(red: 0/255, green: 88/255, blue: 176/255, alpha: 1)
     
     
-    
+    static func getColorByLiteralName(_ color:String) -> UIColor {
+        switch color.lowercased() {
+        case "green":
+            return .systemGreen
+        case "red":
+            return .systemRed
+        case "yellow":
+            return .systemYellow
+        default:
+            return .hetro_black
+        }
+    }
 }

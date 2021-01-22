@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 class MainTabBarViewController: UITabBarController {
 
     override func viewDidLoad() {
@@ -28,14 +29,20 @@ class MainTabBarViewController: UITabBarController {
         let homeViewController = HomeViewController()
         let homeViewControllerNavigation = UINavigationController(rootViewController: homeViewController)
         homeViewControllerNavigation.navigationBar.prefersLargeTitles = true
+        homeViewController.customeSplitViewController = splitViewController
         
-        splitViewController.viewControllers = [homeViewControllerNavigation]
+        
+        let spotDetailViewController = SpotDetailViewController()
+        spotDetailViewController.spot = Spot()
+        
+        
+        splitViewController.viewControllers = [homeViewControllerNavigation, spotDetailViewController]
         
     
         
         
         viewControllers = [
-            homeViewControllerNavigation,
+            splitViewController,
         ]
         
         

@@ -71,6 +71,7 @@ class DataClass: Codable {
     var spots: [Spot]?
     var tides:[Tide]?
     var wind:[Wind]?
+    var wave:[Wave]?
 }
 
 // MARK: - Breadcrumb
@@ -163,11 +164,10 @@ class TideTimeline: Codable {
 }
 
 // MARK: - Current
-class Tide: Codable {
+class Tide: Codable, Timeable {
     var type: String?
     var height: Double?
     var timestamp, utcOffset: Int?
-
 }
 
 
@@ -178,16 +178,87 @@ class WaveHeight: Codable {
     var occasional: Double?
     var humanRelation: String?
     var plus: Bool?
-
 }
 
 
 
 // MARK: - Wind
-class Wind: Codable {
+class Wind: Codable,Timeable {
     var speed: Double?
     var direction: Double?
     var timestamp: Int?
     var gust: Double?
     var optimalScore: Double?
 }
+
+
+
+
+
+// MARK: - Wave
+class Wave: Codable,Timeable {
+    var timestamp:Int?
+    var surf:Surf?
+    var swells:[Swell]?
+}
+
+
+//MARK: Surf
+class Surf: Codable {
+    var min:Double?
+    var max:Double?
+    var optimalScore:Double?
+}
+
+//MARK: Swell
+class Swell: Codable {
+    var height:Double?
+    var period:Double?
+    var direction:Double?
+    var directionMin:Double?
+    var optimalScore:Double?
+}
+
+
+
+
+
+protocol Timeable {
+    var timestamp:Int? {get set}
+}
+
+
+extension Sequence where Iterator.Element : Timeable {
+    func getContentSeparatedByTimestamp() -> [String:[Timeable]] {
+        var dict:[String:[Timeable]] = [:]
+        for item in self {
+            if let timestamp = item.timestamp {
+                let date = DateService.convertDate(timestamp.convertUnixToDate(), format: DateService.F3)
+                if dict[date] == nil {
+                    dict[date] = [item]
+                } else {
+                    dict[date]!.append(item)
+                }
+                
+            }
+        }
+        return dict
+    }
+    
+}
+
+extension Sequence where Iterator.Element : Surf {
+    var maxHeight:Double {
+        var m:Double = 0
+        for surf in self {
+            if let max = surf.max {
+                if max > m {
+                    m = max
+                }
+            }
+        }
+        return m
+    }
+    
+}
+

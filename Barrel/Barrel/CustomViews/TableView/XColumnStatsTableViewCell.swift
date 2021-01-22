@@ -73,6 +73,8 @@ extension XColumnStatsTableViewCell: UICollectionViewDelegate, UICollectionViewD
         label.text = statistics[indexPath.row].body
         label.font = statistics[indexPath.row].bodyFont
         label.textColor = statistics[indexPath.row].bodyColor
+        
+        
         if let customBodyView = statistics[indexPath.row].customBodyView {
             cell.configure(statistics[indexPath.row].title, customBodyView)
         }

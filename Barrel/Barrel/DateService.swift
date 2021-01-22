@@ -10,6 +10,8 @@ import Foundation
 
 class DateService {
     static let F1             = "MMM d, h:mm a"
+    static let F2             = "MMM d"
+    static let F3             = "E M/d"
     static let F101           = "h a"
     
     
@@ -27,5 +29,9 @@ class DateService {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = format
         return dateFormatter.string(from: date)
+    }
+    
+    static func getDateFor(days:Int) -> Date? {
+         return Calendar.current.date(byAdding: .day, value: days, to: Date())
     }
 }

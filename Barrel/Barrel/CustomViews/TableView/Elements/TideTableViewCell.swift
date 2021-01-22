@@ -60,8 +60,8 @@ class TideTableViewCell: UITableViewCell {
         var points:[LineGraphViewPoint] = []
         
         for tide in tides {
-            if let heightInFeet = tide.height?.inFeet, let date = tide.timestamp?.convertUnixToDate() {
-                points.append(LineGraphViewPoint(point: CGPoint(), value: heightInFeet, date: date, other: nil))
+            if let height = tide.height, let date = tide.timestamp?.convertUnixToDate() {
+                points.append(LineGraphViewPoint(point: CGPoint(), value: height, date: date, other: nil))
                 
             }
         }

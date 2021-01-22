@@ -81,7 +81,7 @@ class VideoTableViewCell: UITableViewCell {
             contentViewbottomAnchor,
             contentViewleadingAnchor,
             contentViewtrailingAnchor,
-            contentView.heightAnchor.constraint(equalToConstant: 200)
+            contentView.heightAnchor.constraint(equalToConstant: 350)
         
         ])
 

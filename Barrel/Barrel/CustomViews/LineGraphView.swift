@@ -243,7 +243,7 @@ class LineGraphView: UIView {
         drawHorizontalLines(margin, topBorder, width, graphHeight, height, bottomBorder)
         
         setDraggableHoldGesture()
-
+        setHoverGesture()
     }
     
     fileprivate func drawGradientBelowLine(_ columnYPoint: (Double) -> CGFloat, _ maxValue: Double, _ margin: CGFloat, _ colorSpace: CGColorSpace, _ colorLocations: [CGFloat], _ context: CGContext, _ gradient: CGGradient, _ graphPath: UIBezierPath) {
@@ -357,6 +357,25 @@ extension LineGraphView {
 
 //MARK: - Graph Dragging
 extension LineGraphView {
+    fileprivate func setHoverGesture() {
+        let hover = UIHoverGestureRecognizer(target: self, action: #selector(hoverIsDragging(_:)))
+        addGestureRecognizer(hover)
+    }
+    @objc fileprivate func hoverIsDragging(_ sender:UIHoverGestureRecognizer) {
+        switch sender.state {
+        case .began, .changed:
+            let target = sender.location(in: self).x
+            drawDragLocationLine(findClosest(graphViewPoints: self.graphViewPointBank, target: target))
+            
+        case .ended:
+            shapeLayer?.path = nil
+            pointLabel.isHidden = true
+            delegate?.graphViewIsFinishedScrolling()
+            setNeedsDisplay()
+        default:
+            print("")
+        }
+    }
     fileprivate func setDraggableHoldGesture() {
         let longGesture = UILongPressGestureRecognizer(target: self, action: #selector(longPressIsDragging(_:)))
         longGesture.minimumPressDuration = 0.3
