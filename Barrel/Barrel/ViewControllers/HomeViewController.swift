@@ -21,6 +21,9 @@ class HomeViewController: UIViewController {
     
     var spotTags:[Tag] = []
     
+    
+    var currentlySelectedTag:Tag?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -35,6 +38,7 @@ class HomeViewController: UIViewController {
         let textAttributes = [NSAttributedString.Key.foregroundColor:UIColor.oceanBlue]
         navigationController?.navigationBar.titleTextAttributes = textAttributes
         navigationController?.navigationBar.largeTitleTextAttributes = textAttributes
+        setSpotTags()
         setupTableView()
         getData()
     }
@@ -66,14 +70,42 @@ class HomeViewController: UIViewController {
     }
     
     func setSpotTags() {
-        let Nazare = Tag()
-        Nazare.displayName = "Nazare"
-        Nazare.description = "58581a836630e24c4487900f"
+        // -------------------------------------------------- */
+        let brevardCounty = Tag(tagName: "Brevard County",
+                                displayName: "Brevard County",
+                                description: "58581a836630e24c44878fe1")
+        spotTags.append(brevardCounty)
+        // -------------------------------------------------- */
+        let volusiaCounty = Tag(tagName: "Volusia County",
+                           displayName: "Volusia County",
+                           description: "58581a836630e24c44878fe0")
+        spotTags.append(volusiaCounty)
+        // -------------------------------------------------- */
+        let duvalCounty = Tag(tagName: "Duval County",
+                           displayName: "Duval County",
+                           description: "5e556e9231e571b1a21d34a0")
+        spotTags.append(duvalCounty)
+        // -------------------------------------------------- */
+        let orangeCounty = Tag(tagName: "Orange County",
+                               displayName: "Orange County",
+                               description: "58581a836630e24c44878fd6")
+        spotTags.append(orangeCounty)
+        // -------------------------------------------------- */
+        let portugal = Tag(tagName: "Portugal",
+                           displayName: "Portugal",
+                           description: "58581a836630e24c4487900f")
+        spotTags.append(portugal)
+        
+        
+    
+        self.currentlySelectedTag = brevardCounty
     }
+    
+    
     @objc fileprivate func getData() {
-        let nazarePortugal  = "58581a836630e24c4487900f"
-        let spaceCoastFL    = "58581a836630e24c44878fe1"
-        API.getSubRegionOverview(subRegionId: spaceCoastFL) { (overview) in
+        guard let selectedSubRegion = currentlySelectedTag?.description else {return}
+        
+        API.getSubRegionOverview(subRegionId: selectedSubRegion) { (overview) in
             if let overview = overview {
                 self.overview = overview
                 DispatchQueue.main.async {
@@ -108,6 +140,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == tagSection {
             let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(CarouselTagTableViewCell.self), for: indexPath) as! CarouselTagTableViewCell
+            cell.tagDelegate = self
             cell.configure(tags: spotTags)
         }
         else if indexPath.section == spotSection {
@@ -143,7 +176,11 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     
     
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UITableView.automaticDimension
+        if indexPath.section == tagSection {
+            return 50
+        } else {
+            return UITableView.automaticDimension
+        }
     }
     
     public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -159,8 +196,33 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
                 vc.spot = spot
                 customeSplitViewController?.showDetailViewController(vc, sender: self)
                 
-                //            navigationController?.pushViewController(vc, animated: true)
             }            
         }
     }
+}
+
+
+
+extension HomeViewController: TagDelegate {
+    func tagSelected(_ tag: Tag) {
+        if let tagName = tag.tagName {
+            NotificationCenter.default.post(name: Notification.Name(TextContent.TagHit.name),
+                                                           object: nil,
+                                                           userInfo: [TextContent.TagHit.key:tagName] )
+            if let currentlySelectedTagName = currentlySelectedTag?.tagName {
+                if currentlySelectedTagName == tagName {
+                    currentlySelectedTag = nil
+                } else {
+                    currentlySelectedTag = tag
+                }
+            } else {
+                currentlySelectedTag = tag
+            }
+        }
+        
+        getData()
+    }
+    
+   
+    
 }

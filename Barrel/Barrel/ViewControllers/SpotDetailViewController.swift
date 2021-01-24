@@ -36,7 +36,7 @@ class SpotDetailViewController: UIViewController, ForcastDataDelegate {
     /**
      ACCESS TOKEN
      */
-    let accesstoken = "1d993dd3dfedc35f695949be08853a7e5b49236a"
+    let accesstoken = "ac63adc4e07829657fcd72a1b4455f6bcac5d542"
     
     
     

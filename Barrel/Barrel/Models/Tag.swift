@@ -18,7 +18,13 @@ class Tag:Codable {
     var tagCategory:String?
     var tagName:String?
     
+    init(){}
     
+    init(tagName:String, displayName:String, description:String) {
+        self.tagName = tagName
+        self.displayName = displayName
+        self.description = description
+    }
     
     func attributedTitle() -> NSAttributedString {
         let paragraphStyle = NSMutableParagraphStyle()

@@ -88,7 +88,6 @@ class VideoTableViewCell: UITableViewCell {
     }
     
     fileprivate func setupPlayerView() {
-        let session = AVAudioSession.sharedInstance()
         NotificationCenter.default.addObserver(self, selector: #selector(playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: nil)
         self.player.isMuted = true
         self.player.addObserver(self, forKeyPath: "timeControlStatus", options: [.old, .new], context: nil)

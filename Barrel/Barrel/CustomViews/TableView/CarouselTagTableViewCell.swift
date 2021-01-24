@@ -16,7 +16,7 @@ protocol TagDelegate {
 class CarouselTagTableViewCell: UITableViewCell {
     fileprivate var collectionView:UICollectionView!
     var tagDelegate:TagDelegate?
-    var tags:[Tag] = []
+    var tags:[Tag] = [Tag()]
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

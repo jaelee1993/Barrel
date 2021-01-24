@@ -81,7 +81,7 @@ class TagTitleCollectionViewCell: UICollectionViewCell {
        
     fileprivate func setupTab() {
         tab = UIView()
-        tab.backgroundColor = .systemGreen
+        tab.backgroundColor = .oceanBlue
         tab.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(tab)
         NSLayoutConstraint.activate([
