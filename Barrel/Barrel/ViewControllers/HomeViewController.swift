@@ -26,6 +26,7 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.prefersLargeTitles = true
         setup()
     }
     
@@ -91,6 +92,16 @@ class HomeViewController: UIViewController {
                                description: "58581a836630e24c44878fd6")
         spotTags.append(orangeCounty)
         // -------------------------------------------------- */
+        let palmBeachCounty = Tag(tagName: "Palm Beach County",
+                               displayName: "Palm Beach County",
+                               description: "5deecc4b17912b71be2c2e1c")
+        spotTags.append(palmBeachCounty)
+        // -------------------------------------------------- */
+        let browardDateCounty = Tag(tagName: "Broward-Dade County",
+                               displayName: "Broward-Dade County",
+                               description: "58581a836630e24c4487914c")
+        spotTags.append(browardDateCounty)
+        // -------------------------------------------------- */
         let portugal = Tag(tagName: "Portugal",
                            displayName: "Portugal",
                            description: "58581a836630e24c4487900f")
@@ -140,6 +151,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == tagSection {
             let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(CarouselTagTableViewCell.self), for: indexPath) as! CarouselTagTableViewCell
+            cell.removeSeparator()
             cell.tagDelegate = self
             cell.configure(tags: spotTags)
         }

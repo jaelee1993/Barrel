@@ -35,6 +35,10 @@ extension String {
                 return "FAIR TO GOOD"
         case "GOOD":
                 return "GOOD"
+        case "GOOD_TO_EPIC":
+                return "GOOD TO EPIC"
+        case "EPIC":
+                return "EPIC"
         default:
             return "N/A"
         }
@@ -53,6 +57,8 @@ extension String {
             return .green
         case "GOOD":
             return .systemYellow
+        case "EPIC":
+            return .systemRed
         default:
             return .oceanBlue
         }
