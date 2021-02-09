@@ -33,6 +33,8 @@
 		7A76F06824C923C400ADA4A8 /* XColumnStatsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A76F06724C923C400ADA4A8 /* XColumnStatsTableViewCell.swift */; };
 		7A76F06A24C9240A00ADA4A8 /* ThreeColumnForStatsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A76F06924C9240A00ADA4A8 /* ThreeColumnForStatsTableViewCell.swift */; };
 		7A76F06D24C9247800ADA4A8 /* StatCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A76F06C24C9247800ADA4A8 /* StatCollectionViewCell.swift */; };
+		7AB5863325D2BDCB008BCB72 /* NetworkingError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB5863225D2BDCB008BCB72 /* NetworkingError.swift */; };
+		7AB5863725D2BEEC008BCB72 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB5863625D2BEEC008BCB72 /* HomeViewModel.swift */; };
 		7ABE04A924DCE529008A5792 /* WindGraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ABE04A824DCE529008A5792 /* WindGraphView.swift */; };
 		7ABE04AB24DCEA8A008A5792 /* WindTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ABE04AA24DCEA8A008A5792 /* WindTableViewCell.swift */; };
 		7ABE04AD24DF43A2008A5792 /* WindArrow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ABE04AC24DF43A2008A5792 /* WindArrow.swift */; };
@@ -116,6 +118,8 @@
 		7A76F06E24C9DC4300ADA4A8 /* Barrel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Barrel.entitlements; sourceTree = "<group>"; };
 		7A933415252BA80C007FCE45 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		7A933417252BA80C007FCE45 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		7AB5863225D2BDCB008BCB72 /* NetworkingError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingError.swift; sourceTree = "<group>"; };
+		7AB5863625D2BEEC008BCB72 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		7ABE04A824DCE529008A5792 /* WindGraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindGraphView.swift; sourceTree = "<group>"; };
 		7ABE04AA24DCEA8A008A5792 /* WindTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindTableViewCell.swift; sourceTree = "<group>"; };
 		7ABE04AC24DF43A2008A5792 /* WindArrow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindArrow.swift; sourceTree = "<group>"; };
@@ -188,6 +192,7 @@
 				7A76F05824C916BB00ADA4A8 /* RowActionDelegate.swift */,
 				7A76F06324C9217700ADA4A8 /* VideoService.swift */,
 				7AC5ACB724CC64B900CDE7A0 /* DateService.swift */,
+				7AB5863625D2BEEC008BCB72 /* HomeViewModel.swift */,
 				7AC5ACB624CC64AC00CDE7A0 /* Enum */,
 				7A76F05C24C9173C00ADA4A8 /* Extensions */,
 				7A76F05424C9166C00ADA4A8 /* Models */,
@@ -302,6 +307,7 @@
 			isa = PBXGroup;
 			children = (
 				7AC5AC3F24CB06D500CDE7A0 /* OceanElement.swift */,
+				7AB5863225D2BDCB008BCB72 /* NetworkingError.swift */,
 			);
 			path = Enum;
 			sourceTree = "<group>";
@@ -464,6 +470,7 @@
 				7A39662E24C864DD00D01130 /* ViewController.swift in Sources */,
 				7AC5ACB524CBBEDE00CDE7A0 /* Number.swift in Sources */,
 				7AC9875D255787610007EEDC /* CarouselTagTableViewCell.swift in Sources */,
+				7AB5863725D2BEEC008BCB72 /* HomeViewModel.swift in Sources */,
 				7AE21A4E24EFEC8A002F3A41 /* BarGraph.swift in Sources */,
 				7AC5ACBA24CC664100CDE7A0 /* LineGraphView.swift in Sources */,
 				7AC5ACBC24CC69E800CDE7A0 /* TideTableViewCell.swift in Sources */,
@@ -489,6 +496,7 @@
 				7AE21A2924E43D53002F3A41 /* CustomSplitViewController.swift in Sources */,
 				7A76F06224C91D8B00ADA4A8 /* AVPlayer.swift in Sources */,
 				7AC98760255787970007EEDC /* Tag.swift in Sources */,
+				7AB5863325D2BDCB008BCB72 /* NetworkingError.swift in Sources */,
 				7A76F05924C916BC00ADA4A8 /* RowActionDelegate.swift in Sources */,
 				7A76F06024C91CA000ADA4A8 /* VideoTableViewCell.swift in Sources */,
 			);

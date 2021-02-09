@@ -9,10 +9,12 @@
 import Foundation
 import UIKit
 import MobileCoreServices
+import Combine
 
 class NetworkingManager {
     // Type alias
     typealias dataTaskSessionHandler = (Result<(Data,URLResponse),Error>) -> Void
+    typealias networkingDataPublisher = AnyPublisher<Data, NetworkingError>
     
     // Instance
     static let sharedInstance = NetworkingManager()
@@ -53,6 +55,40 @@ class NetworkingManager {
             completion(.success((data,response)))
             
             }.resume()
+    }
+    
+    //MARK: - Using Combine
+    /** Reactive */
+    public func GET(urlString: String, apiKey: String? = nil, idToken: String? = nil)  -> networkingDataPublisher {
+        guard let url = URL(string: urlString) else {
+            return Fail(error: NetworkingError.urlInvalid)
+              .eraseToAnyPublisher()
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        if let apiKey = apiKey {
+            request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
+        }
+        if let idToken = idToken {
+            request.setValue(idToken, forHTTPHeaderField: "x-id-token")
+        }
+        
+        return defaultSession.dataTaskPublisher(for: request)
+            // 2
+            .tryMap { response in
+                guard let httpURLResponse = response.response as? HTTPURLResponse else {
+                    throw NetworkingError.invalidHttpResponse
+                }
+                
+                guard httpURLResponse.statusCode == 200 else {
+                    throw NetworkingError.statusCode(httpURLResponse.statusCode)
+                }
+                // 5
+                return response.data
+            }
+            .mapError({NetworkingError.map($0)})
+            .eraseToAnyPublisher()
         
     }
     
@@ -90,6 +126,45 @@ class NetworkingManager {
         
     }
     
+    //MARK: - Using Combine
+    /** Reactive */
+    public func POST(urlString: String, parameters:[String:Any], apiKey: String? = nil, idToken: String? = nil) -> networkingDataPublisher {
+        guard let url = URL(string: urlString) else {
+            return Fail(error: NetworkingError.urlInvalid).eraseToAnyPublisher()
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        
+        if let apiKey = apiKey {
+            request.setValue(apiKey, forHTTPHeaderField: "x-api-key")
+        }
+        if let idToken = idToken {
+            request.setValue(idToken, forHTTPHeaderField: "x-id-token")
+        }
+        do {
+            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: JSONSerialization.WritingOptions.prettyPrinted)
+        }
+        catch {
+            return Fail(error: NetworkingError.map(error)).eraseToAnyPublisher()
+        }
+        
+        return defaultSession.dataTaskPublisher(for: request)
+            // 2
+            .tryMap { response in
+                guard let httpURLResponse = response.response as? HTTPURLResponse else {
+                    throw NetworkingError.invalidHttpResponse
+                }
+                
+                guard httpURLResponse.statusCode == 200 else {
+                    throw NetworkingError.statusCode(httpURLResponse.statusCode)
+                }
+                // 5
+                return response.data
+            }
+            .mapError({NetworkingError.map($0)})
+            .eraseToAnyPublisher()
+        
+    }
     
     public func PATCH(urlString: String, parameters:[String:Any], apiKey: String? = nil, idToken: String? = nil, completion: @escaping dataTaskSessionHandler) {
         let url = URL(string: urlString)

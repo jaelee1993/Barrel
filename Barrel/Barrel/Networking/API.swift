@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import Combine
 
 class API {
     private static let decoder        = JSONDecoder()
@@ -42,6 +42,19 @@ class API {
                 completion(nil)
             }
         }
+    }
+    
+    static func getSubRegionOverview(subRegionId:String) -> AnyPublisher<Overview, NetworkingError> {
+        let path = "regions/overview?subregionId=\(subRegionId)&meterRemaining=undefined"
+        let url = baseUrl + path
+        
+        return NetworkingManager.sharedInstance.GET(urlString: url).tryMap { data in
+            return data
+        }.decode(type: Overview.self, decoder: JSONDecoder())
+        .mapError({NetworkingError.map($0)})
+        .eraseToAnyPublisher()
+    
+        
     }
     
     
