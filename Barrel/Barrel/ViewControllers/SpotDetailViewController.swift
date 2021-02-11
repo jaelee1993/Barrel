@@ -7,74 +7,26 @@
 //
 
 import UIKit
-enum TextContent {
-    enum SurfDataCarouselScrolled {
-        static let name                     = "SurfDataCarouselScrolled"
-        static let indexKey                 = "indexKey"
-    }
-    enum SurfDataSegmentHit {
-        static let name                     = "SurfDataSegmentHit"
-        static let indexKey                 = "indexKey"
-    }
-    
-    enum TagHit {
-        static let name                     = "tagHit"
-        static let key                      = "tagKey"
-    }
-    
-    
-}
-protocol ForcastDataDelegate {
-    var tideOverview:Overview? {get set}
-    var windOverview:Overview? {get set}
-    var waveOverview:Overview? {get set}
-    var currentSelectedDate:String {get set}
-    var segments:[String] {get set}
-}
+import Combine
 
-class SpotDetailViewController: UIViewController, ForcastDataDelegate {
-    /**
-     ACCESS TOKEN
-     */
-    let accesstoken = "ac63adc4e07829657fcd72a1b4455f6bcac5d542"
+
+class SpotDetailViewController: UIViewController {
+    var tableView:          UITableView!
+    var segmentedControl:   UISegmentedControl_Underline!
     
+    var videoSection:       Int = 0
+    var statSection:        Int = 1
+    var segmentSection:     Int = 2
+    var sections:           [Int] = []
     
+    var viewModel:          SpotDetailViewModel?
     
-    var tableView:UITableView!
-    var segmentedControl:UISegmentedControl_Underline!
-    
-    var videoSection:Int = 0
-    var statSection:Int = 1
-    var segmentSection:Int = 2
-    var sections:[Int] = []
-    
-    
-    var spot:Spot?
-    var tideOverview:Overview?
-    var windOverview:Overview?
-    var waveOverview:Overview?
-    var currentSelectedDate:String = DateService.convertDate(Date(), format: DateService.F3) {
-        didSet {
-            
-        }
-    }
-    
-    
-    
-    var segments:[String] = [DateService.convertDate(Date(), format: DateService.F3),
-                    DateService.convertDate(DateService.getDateFor(days: 1)!, format: DateService.F3),
-                    DateService.convertDate(DateService.getDateFor(days: 2)!, format: DateService.F3),
-                    DateService.convertDate(DateService.getDateFor(days: 3)!, format: DateService.F3),
-                    DateService.convertDate(DateService.getDateFor(days: 4)!, format: DateService.F3),
-                    DateService.convertDate(DateService.getDateFor(days: 5)!, format: DateService.F3),]
+    var subscribers = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .hetro_white
-        
         setup()
-
-        
     }
     
     deinit {
@@ -83,18 +35,15 @@ class SpotDetailViewController: UIViewController, ForcastDataDelegate {
     
     fileprivate func setup() {
         setupSegmentedControl()
-        setupTitle()
         setupTableView()
         setupObservers()
+        setupBindings()
         getData()
     }
-    fileprivate func setupTitle() {
-        if let name = spot?.name {
-            self.title = name
-        }
-    }
+    
     fileprivate func setupSegmentedControl() {
-        segmentedControl = UISegmentedControl_Underline(items: segments)
+        
+        segmentedControl = UISegmentedControl_Underline(items: viewModel?.segments ?? [])
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.translatesAutoresizingMaskIntoConstraints = false
         segmentedControl.textColor = UIColor.hetro_black
@@ -105,6 +54,8 @@ class SpotDetailViewController: UIViewController, ForcastDataDelegate {
     @objc func segmentAction(_ sender:UISegmentedControl) {
         let index = segmentedControl.selectedSegmentIndex
         NotificationCenter.default.post(name: NSNotification.Name(TextContent.SurfDataSegmentHit.name), object: nil, userInfo: [TextContent.SurfDataCarouselScrolled.indexKey:index])
+        
+//        NotificationCenter.default.publisher(for: <#T##Notification.Name#>)
     }
     
     fileprivate func setupTableView() {
@@ -154,62 +105,37 @@ class SpotDetailViewController: UIViewController, ForcastDataDelegate {
             self.tableView.reloadData()
         }
     }
-    func getStatistics() -> [Statistic]{
-        var statistics = [Statistic]()
-        if let conditions = spot?.conditions?.value {
-            statistics.append(Statistic(title: "Conditions", body: conditions.getDisplayCondition(), bodyBackgroundColor:conditions.getColorForCondition()))
-        }
-        if let windSpeed = spot?.wind?.speed {
-            statistics.append(Statistic(title: "Wind Speed", body: "\(windSpeed)mph"))
-        }
-        if let windInDegrees = spot?.wind?.direction {
-            statistics.append(Statistic(title: "Wind Direction", body: windInDegrees.convertDegreeToDirection()+"(\(windInDegrees))"))
-        }
-        return statistics
+    
+    
+   
+    
+    
+    
+}
+
+extension SpotDetailViewController {
+    func setupBindings() {
+        guard let viewModel = viewModel else {return}
+        
+        viewModel.$spot.sink(receiveValue: { [unowned self] (spot) in
+            self.title = spot?.name ?? ""
+        }).store(in: &subscribers)
+        
+        
+        viewModel.$tideOverview.combineLatest(viewModel.$waveOverview, viewModel.$windOverview)
+            .receive(on: DispatchQueue.main)
+            .sink { (response) in
+            print(response)
+        } receiveValue: { [unowned self] (value) in
+            self.tableView.reloadData()
+        }.store(in: &subscribers)
+        
+        
     }
     
     func getData() {
-        guard let id = spot?._id else {return}
-    
-        
-        
-        getTides(id, accesstoken)
-        getWind(id, accesstoken)
-        getWave(id, accesstoken)
+        viewModel?.getData()
     }
-    
-    
-    fileprivate func getTides(_ id: String, _ accesstoken: String) {
-        API.getSpotElements(oceanElement: .tides,
-                            spotId: id,
-                            parameter: ElementParameter(spotId: id, days: 6, intervalHours: 1, accesstoken: accesstoken)) { (response) in
-                                if let response = response {
-                                    self.tideOverview = response
-                                    self.updateTableView()
-                                }
-        }
-    }
-    fileprivate func getWind(_ id: String, _ accesstoken: String) {
-        API.getSpotElements(oceanElement: .wind,
-                            spotId: id,
-                            parameter: ElementParameter(spotId: id, days: 6, intervalHours: 3, accesstoken: accesstoken)) { (response) in
-                                if let response = response {
-                                    self.windOverview = response
-                                    self.updateTableView()
-                                }
-        }
-    }
-    fileprivate func getWave(_ id: String, _ accesstoken: String) {
-        API.getSpotElements(oceanElement: .wave,
-                            spotId: id,
-                            parameter: ElementParameter(spotId: id, days: 6, intervalHours: 3, accesstoken: accesstoken)) { (response) in
-                                if let response = response {
-                                    self.waveOverview = response
-                                    self.updateTableView()
-                                }
-        }
-    }
-    
 }
 
 
@@ -249,7 +175,7 @@ extension SpotDetailViewController: UITableViewDelegate, UITableViewDataSource {
                 let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(VideoTableViewCell.self), for: indexPath) as! VideoTableViewCell
                 cell.parentViewController = self
                 cell.removeSeparator()
-                if let firstCamera = spot?.cameras?.first, let streamUrl = firstCamera.streamUrl  {
+                if let firstCamera = viewModel?.spot?.cameras?.first, let streamUrl = firstCamera.streamUrl  {
                     cell.configure(urlString: streamUrl, parentViewController: self)
                     cell.removeSeparator()
                 } else {
@@ -264,21 +190,21 @@ extension SpotDetailViewController: UITableViewDelegate, UITableViewDataSource {
             }
         case segmentSection:
             let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(ForcastDataTableViewCell.self), for: indexPath) as! ForcastDataTableViewCell
-            cell.carouselForcastDataView.dataSource = self
+            cell.carouselForcastDataView.dataSource = viewModel
             return cell
         case statSection:
-            let stats = getStatistics()
-                     if stats.count <= 2 {
-                         let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(ThreeColumnForStatsTableViewCell.self), for: indexPath) as! XColumnStatsTableViewCell
-                         cell.configure( stats )
-                         cell.removeSeparator()
-                         return cell
-                     } else {
-                         let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(TwoColumnForStatsTableViewCell.self), for: indexPath) as! XColumnStatsTableViewCell
-                         cell.configure( stats )
-                         cell.removeSeparator()
-                         return cell
-                     }
+            let stats = viewModel?.getStatistics() ?? []
+            if stats.count <= 2 {
+                let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(ThreeColumnForStatsTableViewCell.self), for: indexPath) as! XColumnStatsTableViewCell
+                cell.configure( stats )
+                cell.removeSeparator()
+                return cell
+            } else {
+                let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(TwoColumnForStatsTableViewCell.self), for: indexPath) as! XColumnStatsTableViewCell
+                cell.configure( stats )
+                cell.removeSeparator()
+                return cell
+            }
         default:
             return UITableViewCell()
         }
@@ -287,7 +213,7 @@ extension SpotDetailViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         switch indexPath.section {
         case videoSection:
-            if let _ = spot?.cameras?.first {
+            if let _ = viewModel?.spot?.cameras?.first {
                 if indexPath.row == 0 {
                     return UITableView.automaticDimension
                 } else {
@@ -300,7 +226,7 @@ extension SpotDetailViewController: UITableViewDelegate, UITableViewDataSource {
         case segmentSection:
             return 700
         case statSection:
-            let stats = getStatistics()
+            let stats = viewModel?.getStatistics() ?? []
             if stats.count <= 2 {
                 return 60
             } else {

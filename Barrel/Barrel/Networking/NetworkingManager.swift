@@ -11,6 +11,7 @@ import UIKit
 import MobileCoreServices
 import Combine
 
+
 class NetworkingManager {
     // Type alias
     typealias dataTaskSessionHandler = (Result<(Data,URLResponse),Error>) -> Void

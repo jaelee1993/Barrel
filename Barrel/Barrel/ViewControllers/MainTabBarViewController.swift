@@ -33,7 +33,7 @@ class MainTabBarViewController: UITabBarController {
         
         
         let spotDetailViewController = SpotDetailViewController()
-        spotDetailViewController.spot = Spot()
+        spotDetailViewController.viewModel = SpotDetailViewModel(spot: Spot())
         
         
         splitViewController.viewControllers = [homeViewControllerNavigation, spotDetailViewController]

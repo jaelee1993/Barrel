@@ -111,7 +111,6 @@ extension CarouselTagTableViewCell: UICollectionViewDelegate, UICollectionViewDa
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
         tagDelegate?.tagSelected(tags[indexPath.row])
     }
     

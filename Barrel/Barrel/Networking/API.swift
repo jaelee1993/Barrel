@@ -13,36 +13,6 @@ class API {
     private static let decoder        = JSONDecoder()
     private static let baseUrl = "https://services.surfline.com/kbyg/"
     
-    static func getSubRegionOverview(subRegionId:String, completion:@escaping(Overview?)->Void) {
-        let path = "regions/overview?subregionId=\(subRegionId)&meterRemaining=undefined"
-        let url = baseUrl + path
-        NetworkingManager.sharedInstance.GET(urlString: url) { (result) in
-            switch result {
-            case .success(let result):
-                let data = result.0
-                let response = result.1
-                print("Success with: \(String(describing: response.url))")
-                do {
-                    if let jsonString = String(data: data, encoding: .utf8) {
-                        print(jsonString)
-                        let overview = try decoder.decode(Overview.self, from: Data(jsonString.utf8))
-                        completion(overview)
-                    }
-                    else {
-                        completion(nil)
-                    }
-                }
-                catch {
-                    print("Error: \(error)")
-                    completion(nil)
-                }
-                
-            case .failure(let error):
-                print("Error: \(error)")
-                completion(nil)
-            }
-        }
-    }
     
     static func getSubRegionOverview(subRegionId:String) -> AnyPublisher<Overview, NetworkingError> {
         let path = "regions/overview?subregionId=\(subRegionId)&meterRemaining=undefined"
@@ -53,51 +23,28 @@ class API {
         }.decode(type: Overview.self, decoder: JSONDecoder())
         .mapError({NetworkingError.map($0)})
         .eraseToAnyPublisher()
-    
-        
     }
     
-    
-    static func getSpotElements<T:Codable>(oceanElement:OceanElement, spotId:String, parameter:T, completion:@escaping (Overview?)->Void) {
-        
+    static func getSpotElements<T:Codable>(oceanElement:OceanElement, spotId:String, parameter:T) -> AnyPublisher<Overview, NetworkingError> {
         var url = baseUrl + "spots/forecasts/\(oceanElement.rawValue)?"
-        guard let bodyDict = try? parameter.toDictionary() else {
-            completion(nil)
-            return
-        }
-         
-        let params = urlParamBuilder(dictionary: bodyDict)
-        url = url+params
-        print(url)
-        
-        
-        NetworkingManager.sharedInstance.GET(urlString: url) { (result) in
-            switch result {
-            case .success(let result):
-                let data = result.0
-                let response = result.1
-                print("Success with: \(String(describing: response.url))")
-                do {
-                    if let jsonString = String(data: data, encoding: .utf8) {
-                        print(jsonString)
-                        let overview = try decoder.decode(Overview.self, from: Data(jsonString.utf8))
-                        completion(overview)
-                    }
-                    else {
-                        completion(nil)
-                    }
-                }
-                catch {
-                    print("Error: \(error)")
-                    completion(nil)
-                }
-                
-            case .failure(let error):
-                print("Error: \(error)")
-                completion(nil)
-            }
+        do {
+            let bodyDict = try parameter.toDictionary()
+            let params = urlParamBuilder(dictionary: bodyDict)
+            url = url+params
+            
+            return NetworkingManager.sharedInstance.GET(urlString: url).tryMap { data in
+                return data
+            }.decode(type: Overview.self, decoder: JSONDecoder())
+            .mapError({NetworkingError.map($0)})
+            .eraseToAnyPublisher()
+        } catch {
+            return Fail(error: NetworkingError.other(error))
+                .eraseToAnyPublisher()
         }
     }
+    
+    
+    
     
     
     

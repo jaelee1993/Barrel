@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A1B7DC625D4C6A800F256A6 /* SpotDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1B7DC525D4C6A800F256A6 /* SpotDetailViewModel.swift */; };
+		7A1B7DCA25D4CF6000F256A6 /* AppCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1B7DC925D4CF6000F256A6 /* AppCredentials.swift */; };
+		7A1B7DD025D5656300F256A6 /* TextContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1B7DCF25D5656300F256A6 /* TextContent.swift */; };
+		7A1B7DD425D5659400F256A6 /* ForcastDataDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A1B7DD325D5659400F256A6 /* ForcastDataDelegate.swift */; };
 		7A39662A24C864DD00D01130 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A39662924C864DD00D01130 /* AppDelegate.swift */; };
 		7A39662C24C864DD00D01130 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A39662B24C864DD00D01130 /* SceneDelegate.swift */; };
 		7A39662E24C864DD00D01130 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A39662D24C864DD00D01130 /* ViewController.swift */; };
@@ -85,6 +89,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7A1B7DC525D4C6A800F256A6 /* SpotDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotDetailViewModel.swift; sourceTree = "<group>"; };
+		7A1B7DC925D4CF6000F256A6 /* AppCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCredentials.swift; sourceTree = "<group>"; };
+		7A1B7DCF25D5656300F256A6 /* TextContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextContent.swift; sourceTree = "<group>"; };
+		7A1B7DD325D5659400F256A6 /* ForcastDataDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForcastDataDelegate.swift; sourceTree = "<group>"; };
 		7A39662624C864DD00D01130 /* Barrel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Barrel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A39662924C864DD00D01130 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7A39662B24C864DD00D01130 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -164,6 +172,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7A1B7DC025D4C4E000F256A6 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				7AB5863625D2BEEC008BCB72 /* HomeViewModel.swift */,
+				7A1B7DC525D4C6A800F256A6 /* SpotDetailViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		7A39661D24C864DD00D01130 = {
 			isa = PBXGroup;
 			children = (
@@ -192,13 +209,14 @@
 				7A76F05824C916BB00ADA4A8 /* RowActionDelegate.swift */,
 				7A76F06324C9217700ADA4A8 /* VideoService.swift */,
 				7AC5ACB724CC64B900CDE7A0 /* DateService.swift */,
-				7AB5863625D2BEEC008BCB72 /* HomeViewModel.swift */,
+				7A1B7DD325D5659400F256A6 /* ForcastDataDelegate.swift */,
 				7AC5ACB624CC64AC00CDE7A0 /* Enum */,
 				7A76F05C24C9173C00ADA4A8 /* Extensions */,
 				7A76F05424C9166C00ADA4A8 /* Models */,
 				7A76F05324C9164B00ADA4A8 /* ViewControllers */,
 				7A76F05524C9167500ADA4A8 /* CustomViews */,
 				7A39663F24C8664400D01130 /* Networking */,
+				7A1B7DC025D4C4E000F256A6 /* ViewModels */,
 				7A39662F24C864DD00D01130 /* Main.storyboard */,
 				7A39663224C864E000D01130 /* Assets.xcassets */,
 				7A39663424C864E000D01130 /* LaunchScreen.storyboard */,
@@ -210,6 +228,7 @@
 		7A39663F24C8664400D01130 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
+				7A1B7DC925D4CF6000F256A6 /* AppCredentials.swift */,
 				7A39663D24C8660C00D01130 /* NetworkingManager.swift */,
 				7A39664024C8665800D01130 /* API.swift */,
 				7AC5AC4324CB09DF00CDE7A0 /* Parameter.swift */,
@@ -307,6 +326,7 @@
 			isa = PBXGroup;
 			children = (
 				7AC5AC3F24CB06D500CDE7A0 /* OceanElement.swift */,
+				7A1B7DCF25D5656300F256A6 /* TextContent.swift */,
 				7AB5863225D2BDCB008BCB72 /* NetworkingError.swift */,
 			);
 			path = Enum;
@@ -475,13 +495,16 @@
 				7AC5ACBA24CC664100CDE7A0 /* LineGraphView.swift in Sources */,
 				7AC5ACBC24CC69E800CDE7A0 /* TideTableViewCell.swift in Sources */,
 				7A76F05E24C91B3000ADA4A8 /* SpotDetailViewController.swift in Sources */,
+				7A1B7DCA25D4CF6000F256A6 /* AppCredentials.swift in Sources */,
 				7A76F06424C9217700ADA4A8 /* VideoService.swift in Sources */,
 				7A76F05724C9169C00ADA4A8 /* GradientView.swift in Sources */,
 				7A39664724C913ED00D01130 /* MainTabBarViewController.swift in Sources */,
 				7AC98763255787F90007EEDC /* TagTitleCollectionViewCell.swift in Sources */,
 				7A39663E24C8660C00D01130 /* NetworkingManager.swift in Sources */,
+				7A1B7DC625D4C6A800F256A6 /* SpotDetailViewModel.swift in Sources */,
 				7A39662A24C864DD00D01130 /* AppDelegate.swift in Sources */,
 				7A39664924C914B600D01130 /* UIColor.swift in Sources */,
+				7A1B7DD025D5656300F256A6 /* TextContent.swift in Sources */,
 				7A76F06624C923A400ADA4A8 /* TwoColumnForStatsTableViewCell.swift in Sources */,
 				7A76F06824C923C400ADA4A8 /* XColumnStatsTableViewCell.swift in Sources */,
 				7AC5AC4224CB07EC00CDE7A0 /* Codable.swift in Sources */,
@@ -499,6 +522,7 @@
 				7AB5863325D2BDCB008BCB72 /* NetworkingError.swift in Sources */,
 				7A76F05924C916BC00ADA4A8 /* RowActionDelegate.swift in Sources */,
 				7A76F06024C91CA000ADA4A8 /* VideoTableViewCell.swift in Sources */,
+				7A1B7DD425D5659400F256A6 /* ForcastDataDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

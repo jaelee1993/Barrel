@@ -7,44 +7,38 @@
 //
 
 import UIKit
+import Combine
 
 class HomeViewController: UIViewController {
     var tableView:                          UITableView!
     var refreshControl:                     UIRefreshControl = UIRefreshControl()
     var customeSplitViewController:         CustomSplitViewController?
-    var overview:                           Overview?
     
     var tagSection:             Int = 0
     var spotSection:            Int = 1
     var sections:               [Int] = []
     
-    
-    var spotTags:[Tag] = []
-    
-    
-    var currentlySelectedTag:Tag?
+    var viewModel =              HomeViewModel()
+
+    var subscribers = Set<AnyCancellable>()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.prefersLargeTitles = true
-        setup()
-    }
-    
-    
-    
-    
-    fileprivate func setup() {
         title = "Spots"
         view.backgroundColor = UIColor.hetro_white
         let textAttributes = [NSAttributedString.Key.foregroundColor:UIColor.oceanBlue]
         navigationController?.navigationBar.titleTextAttributes = textAttributes
         navigationController?.navigationBar.largeTitleTextAttributes = textAttributes
-        setSpotTags()
-        setupTableView()
-        getData()
+
+        setup()
     }
     
-    
+    fileprivate func setup() {
+        setupTableView()
+        setupBindings()
+        getData()
+    }
     
     fileprivate func setupTableView() {
         sections = [tagSection,spotSection]
@@ -70,66 +64,24 @@ class HomeViewController: UIViewController {
         ])
     }
     
-    func setSpotTags() {
-        // -------------------------------------------------- */
-        let brevardCounty = Tag(tagName: "Brevard County",
-                                displayName: "Brevard County",
-                                description: "58581a836630e24c44878fe1")
-        spotTags.append(brevardCounty)
-        // -------------------------------------------------- */
-        let volusiaCounty = Tag(tagName: "Volusia County",
-                           displayName: "Volusia County",
-                           description: "58581a836630e24c44878fe0")
-        spotTags.append(volusiaCounty)
-        // -------------------------------------------------- */
-        let duvalCounty = Tag(tagName: "Duval County",
-                           displayName: "Duval County",
-                           description: "5e556e9231e571b1a21d34a0")
-        spotTags.append(duvalCounty)
-        // -------------------------------------------------- */
-        let orangeCounty = Tag(tagName: "Orange County",
-                               displayName: "Orange County",
-                               description: "58581a836630e24c44878fd6")
-        spotTags.append(orangeCounty)
-        // -------------------------------------------------- */
-        let palmBeachCounty = Tag(tagName: "Palm Beach County",
-                               displayName: "Palm Beach County",
-                               description: "5deecc4b17912b71be2c2e1c")
-        spotTags.append(palmBeachCounty)
-        // -------------------------------------------------- */
-        let browardDateCounty = Tag(tagName: "Broward-Dade County",
-                               displayName: "Broward-Dade County",
-                               description: "58581a836630e24c4487914c")
-        spotTags.append(browardDateCounty)
-        // -------------------------------------------------- */
-        let portugal = Tag(tagName: "Portugal",
-                           displayName: "Portugal",
-                           description: "58581a836630e24c4487900f")
-        spotTags.append(portugal)
-        
-        
-    
-        self.currentlySelectedTag = brevardCounty
-    }
-    
-    
-    @objc fileprivate func getData() {
-        guard let selectedSubRegion = currentlySelectedTag?.description else {return}
-        
-        API.getSubRegionOverview(subRegionId: selectedSubRegion) { (overview) in
-            if let overview = overview {
-                self.overview = overview
-                DispatchQueue.main.async {
-                    self.tableView.reloadData()
-                }
-            }
-            DispatchQueue.main.async {
-                self.refreshControl.endRefreshing()
-            }
-        }
-    }
-    
 }
+
+extension HomeViewController {
+    @objc fileprivate func getData() {
+        viewModel.getData()
+    }
+    
+    func setupBindings() {
+        viewModel.$overview
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] (overview) in
+                self?.tableView.reloadData()
+            }.store(in: &subscribers)
+    }
+}
+
+
+
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
         return sections.count
@@ -141,7 +93,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             return 1
         }
         else if section == spotSection {
-            if let spots = overview?.data?.spots {
+            if let spots = viewModel.overview?.data?.spots {
                 return spots.count
             }
         }
@@ -152,12 +104,12 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == tagSection {
             let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(CarouselTagTableViewCell.self), for: indexPath) as! CarouselTagTableViewCell
             cell.removeSeparator()
-            cell.tagDelegate = self
-            cell.configure(tags: spotTags)
+            cell.tagDelegate = viewModel
+            cell.configure(tags: viewModel.spotTags)
         }
         else if indexPath.section == spotSection {
             let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(SpotTableViewCell.self), for: indexPath) as! SpotTableViewCell
-            if let spots = overview?.data?.spots {
+            if let spots = viewModel.overview?.data?.spots {
                 let spot = spots[indexPath.row]
                 cell.title.text = spot.name == nil ? "N/A" : spot.name!
                 
@@ -202,10 +154,10 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == spotSection {
             tableView.deselectRow(at: indexPath, animated: true)
-            if let spots = overview?.data?.spots {
+            if let spots = viewModel.overview?.data?.spots {
                 let spot = spots[indexPath.row]
                 let vc = SpotDetailViewController()
-                vc.spot = spot
+                vc.viewModel = SpotDetailViewModel(spot: spot)
                 customeSplitViewController?.showDetailViewController(vc, sender: self)
                 
             }            
@@ -213,28 +165,3 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     }
 }
 
-
-
-extension HomeViewController: TagDelegate {
-    func tagSelected(_ tag: Tag) {
-        if let tagName = tag.tagName {
-            NotificationCenter.default.post(name: Notification.Name(TextContent.TagHit.name),
-                                                           object: nil,
-                                                           userInfo: [TextContent.TagHit.key:tagName] )
-            if let currentlySelectedTagName = currentlySelectedTag?.tagName {
-                if currentlySelectedTagName == tagName {
-                    currentlySelectedTag = nil
-                } else {
-                    currentlySelectedTag = tag
-                }
-            } else {
-                currentlySelectedTag = tag
-            }
-        }
-        
-        getData()
-    }
-    
-   
-    
-}
